@@ -1,0 +1,23 @@
+{
+    "dialect": "postgres",
+    "tables": [
+      {
+        "name": "users",
+        "columns": [
+          {"name": "id", "type": "uuid"},
+          {"name": "email", "type": "text"},
+          {"name": "created_at", "type": "timestamp"}
+        ]
+      },
+      {
+        "name": "orders",
+        "columns": [
+          {"name": "id", "type": "uuid"},
+          {"name": "user_id", "type": "uuid"},
+          {"name": "total", "type": "numeric"},
+          {"name": "created_at", "type": "timestamp"}
+        ]
+      }
+    ]
+  }
+  
