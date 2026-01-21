@@ -6,6 +6,13 @@ from app.generator import generate_sql
 
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.db import engine
+from sqlalchemy import text
+from decimal import Decimal
+from datetime import date, datetime
+from uuid import UUID
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000"],
@@ -16,6 +23,10 @@ app.add_middleware(
 
 
 app = FastAPI(title="Text-to-SQL API", version="0.1.0")
+
+# Auto generate schema
+schema_data = auto_load_schema()
+write_to_schema(schema_data)
 
 # Load schema once at startup (fast + consistent)
 _schema = load_schema()
@@ -41,7 +52,36 @@ def generate_sql_endpoint(body: GenerateSqlRequest):
 
     try:
         result = generate_sql(question, _schema_text)
-        return result
+       
+         if result["needs_clarification"]:
+            print(json.dumps(result, indent=2))
+            return
+
+        sql = result["sql"]
+
+        with engine.connect() as conn:
+            result = conn.execute(text(sql))
+            columns = list(result.keys())          
+            rows = result.fetchall()               
+        
+        # Convert rows to JSON-safe dicts
+        rows_out = []
+        for r in rows:
+            row_dict = dict(r._mapping)
+            safe_row = {}
+            for key, value in row_dict.items():
+                safe_row[key] = json_safe(value)
+            rows_out.append(safe_row)
+
+        response = {
+            "sql": sql,
+            "needs_clarification": False,
+            "questions": [],
+            "columns": columns,
+            "rows": rows_out,
+        }   
+
+        return response
     except Exception as e:
         # Don't leak huge tracebacks to the client
         raise HTTPException(status_code=500, detail=str(e))

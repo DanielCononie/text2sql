@@ -11,12 +11,31 @@ pip install -r requirements.txt
 ### run server
 uvicorn api:app --reload --port 8000
 
+### run postgres
+docker stop text2sql-postgres
+docker start text2sql-postgres
+
+### restart postgres
+docker restart text2sql-postgres
+
+### remove postgres, keeps data volume
+docker rm -f text2sql-postgres
+
+### remove postgres, removes data volume
+docker start text2sql-postgres
+
+### remove postgres, removes data volume
+docker stop text2sql-postgres
+
+
+
 -----------------------------------------------------------------------------------
 
 ## Endpoints
 
 ### generate-sql
 Type: POST
+Description: Generate SQL from a question based on context of the schema.json
 
 Request Body:
 ```json
@@ -46,7 +65,6 @@ Response Body:
     "ok": boolean
 }
 ```
-
 
 
 ## Model

@@ -1,23 +1,43 @@
 {
-    "dialect": "postgres",
-    "tables": [
-      {
-        "name": "users",
-        "columns": [
-          {"name": "id", "type": "uuid"},
-          {"name": "email", "type": "text"},
-          {"name": "created_at", "type": "timestamp"}
-        ]
-      },
-      {
-        "name": "orders",
-        "columns": [
-          {"name": "id", "type": "uuid"},
-          {"name": "user_id", "type": "uuid"},
-          {"name": "total", "type": "numeric"},
-          {"name": "created_at", "type": "timestamp"}
-        ]
-      }
-    ]
-  }
-  
+  "dialect": "postgres",
+  "tables": [
+    {
+      "name": "users",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID"
+        },
+        {
+          "name": "email",
+          "type": "TEXT"
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP"
+        }
+      ]
+    },
+    {
+      "name": "orders",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID"
+        },
+        {
+          "name": "user_id",
+          "type": "UUID"
+        },
+        {
+          "name": "total",
+          "type": "NUMERIC"
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP"
+        }
+      ]
+    }
+  ]
+}
