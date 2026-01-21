@@ -76,3 +76,10 @@ The model is not bundled or redistributed with this repository.
 Users are expected to install and run their own compatible model locally.
 
 -----------------------------------------------------------------------------------
+
+## TODO
+
+- [ Add extra validation for select only queries ]
+- [ Add a github pipeline to auto upgrade packages, run linting, tests, etc.] 
+- [ Finish UI development ]
+- [ Utilize results to generate insights ] 
