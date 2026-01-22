@@ -13,17 +13,11 @@ def build_prompt(schema_text: str, question: str) -> str:
     )
 
 def generate_sql(question: str, schema_text: str) -> dict:
-    ## 
-    # 1) Build the prompt
-    # 2) Call Ollama
-    # 3) Parse the response
-    # 4) Validate the SQL
-    ##
     prompt = build_prompt(schema_text, question)
     print("prompt", prompt)
 
-    raw = call_ollama(prompt)      # raw is a string (should be JSON)
-    data = json.loads(raw)         # convert JSON string -> Python dict
+    raw = call_ollama(prompt)     
+    data = json.loads(raw)      
 
     if not data.get("needs_clarification", False):
         sql = data.get("sql", "")

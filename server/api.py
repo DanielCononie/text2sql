@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
-from app.schema_loader import load_schema, schema_to_text
+from app.schema_loader import load_schema, schema_to_text, auto_load_schema, write_to_schema
 from app.generator import generate_sql
 
 from fastapi.middleware.cors import CORSMiddleware
@@ -11,18 +11,21 @@ from sqlalchemy import text
 from decimal import Decimal
 from datetime import date, datetime
 from uuid import UUID
+from main import json_safe
 
+
+
+
+app = FastAPI(title="Text-to-SQL API", version="0.1.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-
-app = FastAPI(title="Text-to-SQL API", version="0.1.0")
 
 # Auto generate schema
 schema_data = auto_load_schema()
@@ -39,6 +42,8 @@ class GenerateSqlResponse(BaseModel):
     sql: str | None
     needs_clarification: bool
     questions: list[str]
+    columns: list[str]
+    rows: list[dict]
 
 @app.get("/health")
 def health():
@@ -53,7 +58,7 @@ def generate_sql_endpoint(body: GenerateSqlRequest):
     try:
         result = generate_sql(question, _schema_text)
        
-         if result["needs_clarification"]:
+        if result["needs_clarification"]:
             print(json.dumps(result, indent=2))
             return
 
@@ -82,6 +87,7 @@ def generate_sql_endpoint(body: GenerateSqlRequest):
         }   
 
         return response
+
     except Exception as e:
         # Don't leak huge tracebacks to the client
         raise HTTPException(status_code=500, detail=str(e))
